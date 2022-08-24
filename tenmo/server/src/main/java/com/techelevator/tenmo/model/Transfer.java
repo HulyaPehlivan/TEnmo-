@@ -35,13 +35,13 @@ public class Transfer {
         this.transferId = transferId;
     }
 
-    public int getTransferTypeId() {
-        return transferTypeId;
-    }
-
-    public void setTransferTypeId(int transferTypeId) {
-        this.transferTypeId = transferTypeId;
-    }
+//    public int getTransferTypeId() {
+//        return transferTypeId;
+//    }
+//
+//    public void setTransferTypeId(int transferTypeId) {
+//        this.transferTypeId = transferTypeId;
+//    }
 
     public int getAccountFrom() {
         return accountFrom;
@@ -59,13 +59,13 @@ public class Transfer {
         this.accountTo = accountTo;
     }
 
-    public boolean isTransferStatus() {
-        return transferStatus;
-    }
-
-    public void setTransferStatus(boolean transferStatus) {
-        this.transferStatus = transferStatus;
-    }
+//    public boolean isTransferStatus() {
+//        return transferStatus;
+//    }
+//
+//    public void setTransferStatus(boolean transferStatus) {
+//        this.transferStatus = transferStatus;
+//    }
 
     public BigDecimal getAmount() {
         return amount;

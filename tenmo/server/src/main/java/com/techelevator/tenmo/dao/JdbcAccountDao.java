@@ -45,7 +45,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public Account getAccountById(int id) {
         Account account = new Account();
-        String sql = "SELECT * FROM account WHERE user_id = ?";
+        String sql = "SELECT * FROM account WHERE account_id = ?";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
         if(result.next()){
            account = mapRowToAccount(result);
@@ -62,17 +62,30 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public BigDecimal subtractBalance(int id, BigDecimal amount) {
-        return null;
+        String sql = "UPDATE accounts SET balance = (balance - ?) WHERE user_id = ?";
+        jdbcTemplate.update(sql, amount, id);
+        return getAccountBalance(id);
+
     }
 
     @Override
     public Account getAccountByUserId(int id) {
-        return null;
+        Account account = new Account();
+        String sql = "SELECT * FROM account WHERE user_id = ?";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
+        if(result.next()){
+            account = mapRowToAccount(result);
+        }
+        return account;
     }
 
     @Override
-    public boolean checkValidTransfer(int id, BigDecimal balance) {
-        return false;
+    public boolean checkValidTransfer(int id, BigDecimal amount) {
+
+        if(amount.compareTo(getAccountBalance(id)) < 0){
+            return false;
+        }
+        return true;
     }
     
     private Account mapRowToAccount(SqlRowSet result){

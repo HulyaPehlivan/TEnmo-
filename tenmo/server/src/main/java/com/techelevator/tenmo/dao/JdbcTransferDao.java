@@ -1,13 +1,16 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcTransferDao implements TransferDao{
     private JdbcTemplate jdbcTemplate;
 
@@ -38,16 +41,6 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public int getAccountFrom(int accountId) {
-        return 0;
-    }
-
-    @Override
-    public int getAccountTo() {
-        return 0;
-    }
-
-    @Override
     public List<Transfer> getAllTransfers() {
         List<Transfer> getAllTransfers = new ArrayList<>();
         String sql ="SELECT * FROM transfer";
@@ -69,14 +62,24 @@ public class JdbcTransferDao implements TransferDao{
         return getAllTransfersById;
     }
 
+    @Override
+    public Transfer createTransfer(Transfer transfer) {
+        String sql = "INSERT INTO transfer (account_from, account_to, amount) VALUES (?, ?, ?) RETURNING transfer_id";
+
+        jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        return transfer;
+    }
+
+
+
     public Transfer mapRowToTransfer(SqlRowSet result){
         Transfer transfer = new Transfer();
         transfer.setTransferId(result.getInt("transfer_id"));
         transfer.setAccountFrom(result.getInt("account_from"));
         transfer.setAccountTo(result.getInt("account_to"));
         transfer.setAmount(result.getBigDecimal("amount"));
-        transfer.setTransferTypeId(result.getInt("transfer_type_id"));
-        transfer.setTransferStatus(result.getBoolean("transfer_status"));
+//        transfer.setTransferTypeId(result.getInt("transfer_type_id"));
+//        transfer.setTransferStatus(result.getBoolean("transfer_status"));
         return transfer;
     }
 

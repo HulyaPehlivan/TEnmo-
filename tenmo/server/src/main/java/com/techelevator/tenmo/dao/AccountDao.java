@@ -13,5 +13,5 @@ public interface AccountDao {
     public BigDecimal addBalance(int id, BigDecimal amount);
     public BigDecimal subtractBalance(int id, BigDecimal amount);
     public Account getAccountByUserId(int id);
-    public boolean checkValidTransfer(int id, BigDecimal balance);
+    public boolean checkValidTransfer(int id, BigDecimal amount);
 }
