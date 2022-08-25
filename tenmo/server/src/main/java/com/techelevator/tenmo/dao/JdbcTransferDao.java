@@ -64,12 +64,22 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public Transfer createTransfer(Transfer transfer) {
-        String sql = "INSERT INTO transfer (account_from, account_to, amount) VALUES (?, ?, ?) RETURNING transfer_id";
+        if(transfer.getAccountFrom() == transfer.getAccountTo()){
+            System.out.println("You cannot send money to yourself");
+        }
+        String sql = "INSERT INTO transfer (transfer_type_id, account_from, account_to, amount) VALUES (?, ?, ?, ?) RETURNING transfer_id";
 
-        jdbcTemplate.update(sql, transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        Integer newTransferId;
+        newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        transfer.setTransferId(newTransferId);
+
         return transfer;
     }
 
+    @Override
+    public void updateTransferStatus(int statusId) {
+
+    }
 
 
     public Transfer mapRowToTransfer(SqlRowSet result){
@@ -78,8 +88,8 @@ public class JdbcTransferDao implements TransferDao{
         transfer.setAccountFrom(result.getInt("account_from"));
         transfer.setAccountTo(result.getInt("account_to"));
         transfer.setAmount(result.getBigDecimal("amount"));
-//        transfer.setTransferTypeId(result.getInt("transfer_type_id"));
-//        transfer.setTransferStatus(result.getBoolean("transfer_status"));
+        transfer.setTransferTypeId(result.getInt("transfer_type_id"));
+        transfer.setTransferStatus(result.getBoolean("transfer_status"));
         return transfer;
     }
 

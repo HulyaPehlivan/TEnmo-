@@ -41,10 +41,9 @@ public class TransferController {
         return transfer;
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    private void updateAccountBalance(@PathVariable int accountTo, @PathVariable int accountFrom, @PathVariable BigDecimal amount){
-        accountDao.addBalance(accountTo, amount);
+    private void updateAccountBalance(int accountFrom, int accountTo, BigDecimal amount){
         accountDao.subtractBalance(accountFrom, amount);
+        accountDao.addBalance(accountTo, amount);
     }
 
     @RequestMapping(value = "/transfer/{id}", method = RequestMethod.GET)
@@ -57,6 +56,7 @@ public class TransferController {
     public List<Transfer> getTransfersByAccountId(){
         return null;
     }
+    
 
 
 }

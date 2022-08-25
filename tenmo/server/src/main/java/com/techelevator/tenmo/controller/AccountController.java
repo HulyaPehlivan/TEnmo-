@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.annotation.Repeatable;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,13 @@ public class AccountController {
     public Account getAccountByUserId(@PathVariable int id){
         Account account = accountDao.getAccountByUserId(id);
         return account;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
+    public BigDecimal getBalance(@PathVariable int id){
+        BigDecimal balance = accountDao.getAccountBalance(id);
+        return balance;
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
