@@ -70,14 +70,16 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public BigDecimal subtractBalance(int id, BigDecimal amount) {
+
         BigDecimal balance = getAccountBalance(id);
         balance = balance.subtract(amount);
         Integer newBalance = balance.intValue();
-        String sql = "UPDATE account SET balance = ? WHERE account_id = ?";
         Account account = new Account();
-        jdbcTemplate.update(sql, newBalance, id);
-        account = getAccountById(id);
-
+        if(checkValidTransfer(id, amount)) {
+            String sql = "UPDATE account SET balance = ? WHERE account_id = ?";
+            jdbcTemplate.update(sql, newBalance, id);
+            account = getAccountById(id);
+        }
         return account.getBalance();
 
     }
@@ -96,7 +98,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public boolean checkValidTransfer(int id, BigDecimal amount) {
 
-        if(amount.compareTo(getAccountBalance(id)) < 0){
+        if(amount.intValue() > getAccountBalance(id).intValue()){
             return false;
         }
         return true;

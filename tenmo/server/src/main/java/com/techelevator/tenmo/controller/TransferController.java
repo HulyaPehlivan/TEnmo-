@@ -56,7 +56,10 @@ public class TransferController {
     public List<Transfer> getTransfersByAccountId(){
         return null;
     }
-    
-
+//
+//    @RequestMapping(value = "/transfer/status/{statusId}", method = RequestMethod.PUT)
+//    public void updateTransferStatus(@PathVariable int statusId, @RequestParam int transferId){
+//        transferDao.updateTransferStatus(statusId, transferId);
+//    }
 
 }
