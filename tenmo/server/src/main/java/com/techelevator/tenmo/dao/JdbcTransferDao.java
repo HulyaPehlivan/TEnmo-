@@ -66,21 +66,21 @@ public class JdbcTransferDao implements TransferDao{
         if(transfer.getAccountFrom() == transfer.getAccountTo()){
             System.out.println("You cannot send money to yourself");
         }
-        String sql = "INSERT INTO transfer ( transfer_type_id, account_from, account_to, amount) VALUES (?, ?, ?, ?) RETURNING transfer_id";
+        String sql = "INSERT INTO transfer ( transfer_type_id, account_from, account_to,transfer_status_id, amount) VALUES (?,?, ?, ?, ?) RETURNING transfer_id";
 
         Integer newTransferId;
-        newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getAmount());
+        newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getTransferStatusId(), transfer.getAmount());
         transfer.setTransferId(newTransferId);
 
         return transfer;
     }
 
-//    @Override
-//    public void updateTransferStatus(int statusId, int transferId) {
-//        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ? ";
-//        jdbcTemplate.update(sql, statusId, transferId);
-//
-//    }
+    @Override
+    public void updateTransferStatus(int statusId, int transferId) {
+        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ? ";
+        jdbcTemplate.update(sql, statusId, transferId);
+
+    }
 
 
     public Transfer mapRowToTransfer(SqlRowSet result){
@@ -90,7 +90,7 @@ public class JdbcTransferDao implements TransferDao{
         transfer.setAccountTo(result.getInt("account_to"));
         transfer.setAmount(result.getBigDecimal("amount"));
         transfer.setTransferTypeId(result.getInt("transfer_type_id"));
-//        transfer.setTransferStatusId(result.getInt("transfer_status_id"));
+       transfer.setTransferStatusId(result.getInt("transfer_status_id"));
         return transfer;
     }
 

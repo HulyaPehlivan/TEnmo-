@@ -8,18 +8,18 @@ public class Transfer {
     private int transferTypeId;
     private int accountFrom;
     private int accountTo;
-//    private  int transferStatusId;
+    private  int transferStatusId;
     private BigDecimal amount;
 
     //constructor
 
 
-    public Transfer(int transferId, int transferTypeId, int accountFrom, int accountTo, BigDecimal amount) {
+    public Transfer(int transferId, int transferTypeId, int accountFrom, int transferStatusId, int accountTo, BigDecimal amount) {
         this.transferId = transferId;
         this.transferTypeId = transferTypeId;
         this.accountFrom = accountFrom;
         this.accountTo = accountTo;
-//        this.transferStatusId = transferStatusId;
+        this.transferStatusId = transferStatusId;
         this.amount = amount;
     }
 
@@ -59,13 +59,13 @@ public class Transfer {
         this.accountTo = accountTo;
     }
 
-//    public int getTransferStatusId() {
-//        return transferStatusId;
-//    }
-//
-//    public void setTransferStatusId(int transferStatusId) {
-//        this.transferStatusId = transferStatusId;
-//    }
+    public int getTransferStatusId() {
+        return transferStatusId;
+    }
+
+    public void setTransferStatusId(int transferStatusId) {
+        this.transferStatusId = transferStatusId;
+    }
 
     public BigDecimal getAmount() {
         return amount;
