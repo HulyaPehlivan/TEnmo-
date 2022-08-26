@@ -9,7 +9,7 @@ public class TransferTypes {
         if(transferTypeName.equals("Send")){
             return 1;
         }
-        return 2;
+        return transferTypeId;
     }
 
     public void setTransferTypeId(int transferTypeId) {

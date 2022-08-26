@@ -6,7 +6,11 @@ public class TransferStatuses {
     private String transferStatusLabel;
 
     public int getTransferStatusId() {
-        return transferStatusId;
+        if(transferStatusLabel.equals("Approved")){
+            return 1;
+        } else if(transferStatusLabel.equals("Denied")){
+            return 2;
+        } return 3;
     }
 
     public void setTransferStatusId(int transferStatusId) {

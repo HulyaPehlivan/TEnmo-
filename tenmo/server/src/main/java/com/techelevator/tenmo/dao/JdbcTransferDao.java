@@ -78,6 +78,8 @@ public class JdbcTransferDao implements TransferDao{
 
             Integer newTransferId;
             newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getTransferStatusId(), transfer.getAmount());
+            transfer.setTransferStatusLabel("Approved");
+            transfer.setTransferTypeLabel("Send");
             transfer.setTransferId(newTransferId);
         }
         // request: else if aocountTo belongs to user thats logged in.  setTransferType to request
