@@ -10,8 +10,8 @@ public interface TransferDao {
     public Transfer getTransferId(int id);
     public BigDecimal getAmount(int id);
     public List<Transfer> getAllTransfers();
-    public List<Transfer> getTransfersByID(int id);
+    public List<Transfer> getTransfersByTransferID(int id);
     public Transfer createTransfer(Transfer transfer);
-    public void updateTransferStatus(int statusId, int transferId);
+    public void updateTransferStatus(String  statusId, int transferId);
 
 }

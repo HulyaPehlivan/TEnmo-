@@ -33,17 +33,6 @@ public class TransferController {
 
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
     public Transfer createTransfer(@Valid @RequestBody Transfer transfer, Principal principal){
-
-
-        //currently all transfers are approved and transfers are Send
-//        transfer.setTransferTypeLabel("Send");
-//        transfer.setTransferStatusLabel("Approved");
-
-
-        // if accountTo is equal to AccountFrom then exit
-
-            // transfer.setTransferType
-        //
         transfer.setAccountFrom(userDao.findIdByUsername(principal.getName()));
         Transfer transfer1 = transferDao.createTransfer(transfer);
 
@@ -63,11 +52,11 @@ public class TransferController {
 
     @RequestMapping(value = "/transfer/{id}", method = RequestMethod.GET)
     public List<Transfer> getTransfersById(@Valid @PathVariable int id){
-        List<Transfer> transfers = transferDao.getTransfersByID(id);
+        List<Transfer> transfers = transferDao.getTransfersByTransferID(id);
         return transfers;
     }
 
-    @RequestMapping(value = "/transfer/account/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/transfer/user/{id}", method = RequestMethod.GET)
     public List<Transfer> getTransfersByAccountId(){
         return null;
     }

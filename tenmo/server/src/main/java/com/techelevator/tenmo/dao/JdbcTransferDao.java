@@ -1,8 +1,6 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.TransferStatuses;
-import com.techelevator.tenmo.model.TransferTypes;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -54,9 +52,9 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public List<Transfer> getTransfersByID(int id) {
+    public List<Transfer> getTransfersByTransferID(int id) {
         List<Transfer> getAllTransfersById = new ArrayList<>();
-        String sql ="SELECT * FROM transfer WHERE transfer_id = ?";
+        String sql ="SELECT transfer_id, account_from, account_to, amount, transfer_status FROM transfer WHERE transfer_id = ?";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
         while (result.next()){
             getAllTransfersById.add(mapRowToTransfer(result));
@@ -66,38 +64,46 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public Transfer createTransfer(Transfer transfer) {
-        TransferTypes transferTypes = new TransferTypes();
-        TransferStatuses transferStatuses = new TransferStatuses();
-        if(transfer.getAccountFrom() == transfer.getAccountTo()){
-            System.out.println("You cannot send money to yourself");
-        } // else // if accountTo is not equal to acountFrom then type is a send type  transfer.setTransferTypeId = 1 (Send)
-                          //  if the type is send then its approved
-        else if (transfer.getAccountTo() != transfer.getAccountFrom()){
 
-            String sql = "INSERT INTO transfer (transfer_type_id, account_from, account_to, transfer_status_id, amount) VALUES (?, ?, ?, ?, ?) RETURNING transfer_id";
+            String sql = "INSERT INTO transfer ( account_from, account_to,  amount, transfer_status) VALUES ( ?, ?, ?, 'Approved') RETURNING transfer_id";
+//            String sql2 = "SELECT balance FROM account AS a JOIN tenmo_user AS tu ON tu.user_id = a.user_id where a.user_id = ?;";
+//
+//            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, transfer.getAccountFrom());
+//
+//            if(transfer.getAccountFrom() == transfer.getAccountTo()){
+//                System.out.println("You cannot send money to yourself");
+//            } else if (balance.compareTo(transfer.getAmount()) == -1){
+//                System.out.println("You don't enough money for transfer.");
+//            } else if (transfer.getAmount().compareTo(new BigDecimal("0")) <= 0){
+//                System.out.println("You can't send 0 or negative amount.");
+//            }else{
 
-            Integer newTransferId;
-            newTransferId = jdbcTemplate.queryForObject(sql, Integer.class, transfer.getTransferTypeId(), transfer.getAccountFrom(), transfer.getAccountTo(), transfer.getTransferStatusId(), transfer.getAmount());
-            transfer.setTransferStatusLabel("Approved");
-            transfer.setTransferTypeLabel("Send");
-            transfer.setTransferId(newTransferId);
-        }
-        // request: else if aocountTo belongs to user thats logged in.  setTransferType to request
-        // status as pending
-
-        // user can see a list of pending requests .. user selects request to approve or reject transfer
-        // if they choose approved then we add balance and subtract balance we insert it into the database
-
+                Integer newTransferId;
+                newTransferId = jdbcTemplate.queryForObject(sql, Integer.class,  transfer.getAccountFrom(), transfer.getAccountTo(),  transfer.getAmount());
+                transfer.setTransferId(newTransferId);
+                transfer.setTransferStatus("Approved");
+//            }
         return transfer;
     }
 
+
+
+
+
+
+
     @Override
-    public void updateTransferStatus(int statusId, int transferId) {
-        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao(jdbcTemplate.getDataSource());
-        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ?";
-        jdbcTemplate.update(sql, statusId, transferId);
+    public void updateTransferStatus(String statusId, int transferId) {
 
     }
+
+//    @Override
+//    public void updateTransferStatus(int statusId, int transferId) {
+//        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao(jdbcTemplate.getDataSource());
+//        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ?";
+//        jdbcTemplate.update(sql, statusId, transferId);
+//
+//    }
 
 
 
@@ -107,8 +113,7 @@ public class JdbcTransferDao implements TransferDao{
         transfer.setAccountFrom(result.getInt("account_from"));
         transfer.setAccountTo(result.getInt("account_to"));
         transfer.setAmount(result.getBigDecimal("amount"));
-        transfer.setTransferTypeId(result.getInt("transfer_type_id"));
-        transfer.setTransferStatus(result.getInt("transfer_status_id"));
+        transfer.setTransferStatus(result.getString("transfer_status"));
         return transfer;
     }
 
