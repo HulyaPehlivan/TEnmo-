@@ -7,10 +7,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface TransferDao {
-    public Transfer getTransferId(int id);
+    public Transfer getTransferByTransferId(int id);
     public BigDecimal getAmount(int id);
     public List<Transfer> getAllTransfers();
-    public List<Transfer> getTransfersByTransferID(int id);
+    public List<Transfer> getTransfersByUserID(int id);
     public Transfer createTransfer(Transfer transfer);
     public void updateTransferStatus(String  statusId, int transferId);
 

@@ -17,10 +17,10 @@ public class JdbcTransferDao implements TransferDao{
     public JdbcTransferDao(JdbcTemplate jdbcTemplate){this.jdbcTemplate = jdbcTemplate;}
 
     @Override
-    public Transfer getTransferId(int id) {
+    public Transfer getTransferByTransferId(int id) {
         Transfer transfer = new Transfer();
-        String sql = "SELECT * transfer WHERE transfer_id =?";
-        SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
+        String sql = "SELECT transfer_id, account_from, account_to, transfer_status, amount FROM transfer WHERE transfer_id = ?";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
         if(result.next()){
             transfer = mapRowToTransfer(result);
         }
@@ -52,10 +52,10 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public List<Transfer> getTransfersByTransferID(int id) {
+    public List<Transfer> getTransfersByUserID(int id) {
         List<Transfer> getAllTransfersById = new ArrayList<>();
-        String sql ="SELECT transfer_id, account_from, account_to, amount, transfer_status FROM transfer WHERE transfer_id = ?";
-        SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
+        String sql ="SELECT transfer_id, account_from, account_to, amount, transfer_status FROM transfer WHERE account_from = ? OR account_to = ?";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id, id);
         while (result.next()){
             getAllTransfersById.add(mapRowToTransfer(result));
         }
@@ -66,23 +66,11 @@ public class JdbcTransferDao implements TransferDao{
     public Transfer createTransfer(Transfer transfer) {
 
             String sql = "INSERT INTO transfer ( account_from, account_to,  amount, transfer_status) VALUES ( ?, ?, ?, 'Approved') RETURNING transfer_id";
-//            String sql2 = "SELECT balance FROM account AS a JOIN tenmo_user AS tu ON tu.user_id = a.user_id where a.user_id = ?;";
-//
-//            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, transfer.getAccountFrom());
-//
-//            if(transfer.getAccountFrom() == transfer.getAccountTo()){
-//                System.out.println("You cannot send money to yourself");
-//            } else if (balance.compareTo(transfer.getAmount()) == -1){
-//                System.out.println("You don't enough money for transfer.");
-//            } else if (transfer.getAmount().compareTo(new BigDecimal("0")) <= 0){
-//                System.out.println("You can't send 0 or negative amount.");
-//            }else{
 
                 Integer newTransferId;
                 newTransferId = jdbcTemplate.queryForObject(sql, Integer.class,  transfer.getAccountFrom(), transfer.getAccountTo(),  transfer.getAmount());
                 transfer.setTransferId(newTransferId);
                 transfer.setTransferStatus("Approved");
-//            }
         return transfer;
     }
 
@@ -97,13 +85,6 @@ public class JdbcTransferDao implements TransferDao{
 
     }
 
-//    @Override
-//    public void updateTransferStatus(int statusId, int transferId) {
-//        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao(jdbcTemplate.getDataSource());
-//        String sql = "UPDATE transfer SET transfer_status_id = ? WHERE transfer_id = ?";
-//        jdbcTemplate.update(sql, statusId, transferId);
-//
-//    }
 
 
 

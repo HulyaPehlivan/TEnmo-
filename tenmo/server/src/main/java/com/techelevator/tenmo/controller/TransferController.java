@@ -30,6 +30,18 @@ public class TransferController {
         this.userDao = userDao;
     }
 
+    @RequestMapping(value = "/transfer/{id}", method = RequestMethod.GET)
+    public Transfer getTransferByTransferId(@Valid @PathVariable int id, Principal principal){
+        Transfer transfer = new Transfer();
+        String username = principal.getName();
+        int actualUserId = userDao.findByUsername(username).getId();
+        int accountFromId = transferDao.getTransferByTransferId(id).getAccountFrom();
+        int accountToId = transferDao.getTransferByTransferId(id).getAccountTo();
+        if(actualUserId == accountFromId || actualUserId == accountToId){
+            transfer = transferDao.getTransferByTransferId(id);
+        }
+        return transfer;
+    }
 
     @RequestMapping(value = "/transfer", method = RequestMethod.POST)
     public Transfer createTransfer(@Valid @RequestBody Transfer transfer, Principal principal){
@@ -50,17 +62,17 @@ public class TransferController {
         accountDao.addBalance(accountTo, amount);
     }
 
-    @RequestMapping(value = "/transfer/{id}", method = RequestMethod.GET)
-    public List<Transfer> getTransfersById(@Valid @PathVariable int id){
-        List<Transfer> transfers = transferDao.getTransfersByTransferID(id);
+    @GetMapping(path="/transfer/user/{id}")
+    public List<Transfer> listTransfersByUserId(@PathVariable int id, Principal principal) {
+        List<Transfer> transfers = new ArrayList<>();
+        String userName = principal.getName();
+        int actualUserId = userDao.findByUsername(userName).getId();
+
+        if (id == actualUserId) {
+            transfers = transferDao.getTransfersByUserID(actualUserId);
+            transfers = transferDao.getTransfersByUserID(id);
+
+        }
         return transfers;
     }
-
-    @RequestMapping(value = "/transfer/user/{id}", method = RequestMethod.GET)
-    public List<Transfer> getTransfersByAccountId(){
-        return null;
-    }
-
-
-
 }

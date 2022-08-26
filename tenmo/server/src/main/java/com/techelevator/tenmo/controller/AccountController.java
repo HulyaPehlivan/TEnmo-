@@ -50,17 +50,4 @@ public class AccountController {
         return account;
     }
 
-
-
-
-
-
-
-//    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-//    @RequestMapping(path = "/accounts/transfer", method = RequestMethod.PUT)
-//    public void transferMoney(@RequestParam int fromId, @RequestParam int toId, @RequestParam BigDecimal amount){
-//        accountDao.subtractBalance(fromId, amount);
-//        accountDao.addBalance(toId, amount);
-//    }
-
 }
