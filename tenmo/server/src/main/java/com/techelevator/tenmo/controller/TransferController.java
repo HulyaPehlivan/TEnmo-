@@ -6,12 +6,14 @@ import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
+import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.tree.TreeNode;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +24,27 @@ public class TransferController {
     private AccountDao accountDao;
     private UserDao userDao;
 
-    public TransferController(TransferDao transferDao, AccountDao accountDao){
+    public TransferController(TransferDao transferDao, AccountDao accountDao, UserDao userDao){
         this.transferDao = transferDao;
         this.accountDao = accountDao;
+        this.userDao = userDao;
     }
 
-    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
-    public Transfer createTransfer(@Valid @RequestBody Transfer transfer){
 
+    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
+    public Transfer createTransfer(@Valid @RequestBody Transfer transfer, Principal principal){
+
+
+        //currently all transfers are approved and transfers are Send
+//        transfer.setTransferTypeLabel("Send");
+//        transfer.setTransferStatusLabel("Approved");
+
+
+        // if accountTo is equal to AccountFrom then exit
+
+            // transfer.setTransferType
+        //
+        transfer.setAccountFrom(userDao.findIdByUsername(principal.getName()));
         Transfer transfer1 = transferDao.createTransfer(transfer);
 
         try {
@@ -56,7 +71,7 @@ public class TransferController {
     public List<Transfer> getTransfersByAccountId(){
         return null;
     }
-    
+
 
 
 }

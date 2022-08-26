@@ -22,7 +22,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public BigDecimal getAccountBalance(int id) {
         BigDecimal balance = null;
-        String sql = "SELECT * FROM account WHERE account_id = ?";
+        String sql = "SELECT * FROM account WHERE user_id = ?";
         SqlRowSet result = jdbcTemplate.queryForRowSet(sql, id);
         if(result.next()){
             Account account = mapRowToAccount(result);
@@ -59,11 +59,11 @@ public class JdbcAccountDao implements AccountDao {
         BigDecimal balance = getAccountBalance(id);
         balance = balance.add(amount);
         Integer newBalance = balance.intValue();
-        String sql = "UPDATE account SET balance = ? WHERE account_id = ?";
+        String sql = "UPDATE account SET balance = ? WHERE user_id = ?";
 
         Account account = new Account();
         jdbcTemplate.update(sql, newBalance, id);
-        account = getAccountById(id);
+        account = getAccountByUserId(id);
 
         return account.getBalance();
     }
@@ -73,13 +73,26 @@ public class JdbcAccountDao implements AccountDao {
         BigDecimal balance = getAccountBalance(id);
         balance = balance.subtract(amount);
         Integer newBalance = balance.intValue();
-        String sql = "UPDATE account SET balance = ? WHERE account_id = ?";
         Account account = new Account();
-        jdbcTemplate.update(sql, newBalance, id);
-        account = getAccountById(id);
+        if (checkValidTransfer(amount, id)) {
+            String sql = "UPDATE account SET balance = ? WHERE user_id = ?";
+            jdbcTemplate.update(sql, newBalance, id);
+            account = getAccountByUserId(id);
+        } else {
+            System.out.println("Not enough money in account.");
+        }
 
         return account.getBalance();
 
+    }
+
+    @Override
+    public boolean checkValidTransfer(BigDecimal amount, int id) {
+        JdbcAccountDao jdbcAccountDao = null;
+        if(amount.intValue() > getAccountBalance(id).intValue()){
+            return false;
+        } else
+            return true;
     }
 
     @Override
@@ -91,15 +104,6 @@ public class JdbcAccountDao implements AccountDao {
             account = mapRowToAccount(result);
         }
         return account;
-    }
-
-    @Override
-    public boolean checkValidTransfer(int id, BigDecimal amount) {
-
-        if(amount.compareTo(getAccountBalance(id)) < 0){
-            return false;
-        }
-        return true;
     }
     
     private Account mapRowToAccount(SqlRowSet result){

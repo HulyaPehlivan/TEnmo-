@@ -5,21 +5,22 @@ import java.math.BigDecimal;
 public class Transfer {
     //variables
     private int transferId;
+    private int transferStatusId;
     private int transferTypeId;
     private int accountFrom;
+    private String transferStatusLabel;
+    private String transferTypeLabel;
     private int accountTo;
-    private  boolean transferStatus;
     private BigDecimal amount;
 
+
     //constructor
-
-
-    public Transfer(int transferId, int transferTypeId, int accountFrom, int accountTo, boolean transferStatus, BigDecimal amount) {
+    public Transfer(int transferId, int transferTypeId, int accountFrom, int accountTo, int transferStatusId, BigDecimal amount) {
         this.transferId = transferId;
         this.transferTypeId = transferTypeId;
         this.accountFrom = accountFrom;
         this.accountTo = accountTo;
-        this.transferStatus = transferStatus;
+        this.transferStatusId = transferStatusId;
         this.amount = amount;
     }
 
@@ -40,7 +41,9 @@ public class Transfer {
     }
 
     public void setTransferTypeId(int transferTypeId) {
-        this.transferTypeId = transferTypeId;
+        TransferTypes transferTypes = new TransferTypes();
+        transferTypes.setTransferTypeName(transferTypeLabel);
+        this.transferTypeId = transferTypes.getTransferTypeId();
     }
 
     public int getAccountFrom() {
@@ -59,12 +62,14 @@ public class Transfer {
         this.accountTo = accountTo;
     }
 
-    public boolean isTransferStatus() {
-        return transferStatus;
+    public int getTransferStatusId() {
+        return transferStatusId;
     }
 
-    public void setTransferStatus(boolean transferStatus) {
-        this.transferStatus = transferStatus;
+    public void setTransferStatus(int transferStatusId) {
+        TransferStatuses transferStatuses = new TransferStatuses();
+        transferStatuses.setTransferStatusLabel(transferStatusLabel);
+        this.transferStatusId = transferStatuses.getTransferStatusId();
     }
 
     public BigDecimal getAmount() {
@@ -73,6 +78,25 @@ public class Transfer {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getTransferStatusLabel(){
+        return transferStatusLabel; }
+
+    public void setTransferStatusLabel(String transferStatusLabel) {
+        this.transferStatusLabel = transferStatusLabel;
+    }
+
+    public void setTransferStatusId(int transferStatusId) {
+        this.transferStatusId = transferStatusId;
+    }
+
+    public String getTransferTypeLabel() {
+        return transferTypeLabel;
+    }
+
+    public void setTransferTypeLabel(String transferTypeLabel) {
+        this.transferTypeLabel = transferTypeLabel;
     }
 
     @Override
