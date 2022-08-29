@@ -12,6 +12,6 @@ public interface TransferDao {
     public List<Transfer> getAllTransfers();
     public List<Transfer> getTransfersByUserID(int id);
     public Transfer createTransfer(Transfer transfer);
-    public void updateTransferStatus(String  statusId, int transferId);
+    public void updateTransferStatus(Transfer transfer);
 
 }

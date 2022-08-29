@@ -8,6 +8,7 @@ import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.tree.TreeNode;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@PreAuthorize("isAuthenticated()")
 public class TransferController {
 
     private TransferDao transferDao;
@@ -63,7 +65,7 @@ public class TransferController {
     }
 
     @GetMapping(path="/transfer/user/{id}")
-    public List<Transfer> listTransfersByUserId(@PathVariable int id, Principal principal) {
+    public List<Transfer> listTransfersByUserId(@Valid @PathVariable int id, Principal principal) {
         List<Transfer> transfers = new ArrayList<>();
         String userName = principal.getName();
         int actualUserId = userDao.findByUsername(userName).getId();

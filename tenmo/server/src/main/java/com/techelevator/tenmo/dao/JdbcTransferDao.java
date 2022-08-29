@@ -1,11 +1,13 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,9 @@ import java.util.List;
 @Component
 public class JdbcTransferDao implements TransferDao{
     private JdbcTemplate jdbcTemplate;
+    private AccountDao accountDao;
 
-    public JdbcTransferDao(JdbcTemplate jdbcTemplate){this.jdbcTemplate = jdbcTemplate;}
+    public JdbcTransferDao(DataSource dataSource){this.jdbcTemplate = new JdbcTemplate(dataSource);}
 
     @Override
     public Transfer getTransferByTransferId(int id) {
@@ -81,7 +84,14 @@ public class JdbcTransferDao implements TransferDao{
 
 
     @Override
-    public void updateTransferStatus(String statusId, int transferId) {
+    public void updateTransferStatus(Transfer transfer) {
+        String sql = "UPDATE transfer SET transfer_status = 'Approved' WHERE transfer_id = ?";
+        String sql2 = "UPDATE transfer SET transfer_status = 'Denied' WHERE transfer_id = ?";
+        if(transfer.getAmount().compareTo(accountDao.getAccountBalance(transfer.getAccountFrom())) <= 0){
+            jdbcTemplate.update(sql, transfer.getTransferId());
+        } else {
+            jdbcTemplate.update(sql2, transfer.getTransferId());
+        }
 
     }
 
